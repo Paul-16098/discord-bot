@@ -9,7 +9,7 @@ pub async fn help(
   #[description = "Specific command to show help about"] #[autocomplete = "poise::builtins::autocomplete_command"] command: Option<String>
 ) -> Result<(), Error> {
   poise::builtins::help(ctx, command.as_deref(), poise::builtins::HelpConfiguration {
-    extra_text_at_bottom: "This is an example bot made to showcase features of my custom Discord bot framework",
+    extra_text_at_bottom: "by Paul-16098 [repo](https://github.com/Paul-16098/discord-bot/)",
     show_context_menu_commands: true,
     show_subcommands: true,
     ..Default::default()
@@ -66,7 +66,7 @@ pub async fn clear(
   Ok(())
 }
 /// nuke Channel
-/// 
+///
 /// but the
 #[poise::command(slash_command, default_member_permissions = "MANAGE_CHANNELS")]
 pub async fn nuke(
