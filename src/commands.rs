@@ -1,3 +1,4 @@
+use log::{debug, warn};
 use poise::serenity_prelude::{Channel, Mentionable};
 
 use crate::{Context, Error};
@@ -72,6 +73,7 @@ pub async fn clear(
             .await?;
         }
         Err(e) => {
+            warn!("Failed to delete messages: {:?}", e);
             ctx.say(e.to_string()).await?;
         }
     }
@@ -126,7 +128,7 @@ pub async fn nuke(
                 .await
         {
             if mci.data.custom_id == "sure" {
-                println!("nuke: sure");
+                debug!("nuke: sure");
                 // 不刪除訊息，改為編輯互動訊息並清除按鈕，然後結束等待
                 if let Err(e) = mci
                     .message
@@ -139,7 +141,7 @@ pub async fn nuke(
                     .await
                 {
                     // 記錄但不回傳錯誤，避免 Unknown Message 導致整個指令失敗
-                    println!("Failed to edit interaction message after sure: {:?}", e);
+                    warn!("Failed to edit interaction message after sure: {:?}", e);
                 }
                 ctx.say("This channel has been nuked.").await?;
                 return handle_nuke(
@@ -151,7 +153,7 @@ pub async fn nuke(
                 )
                 .await;
             } else if mci.data.custom_id == "cancel" {
-                println!("nuke: cancel");
+                debug!("nuke: cancel");
                 if let Err(e) = mci
                     .message
                     .edit(
@@ -166,7 +168,7 @@ pub async fn nuke(
                     )
                     .await
                 {
-                    println!("Failed to edit interaction message after cancel: {:?}", e);
+                    warn!("Failed to edit interaction message after cancel: {:?}", e);
                 }
                 // 使用者取消，直接返回
                 return Ok(());
@@ -186,7 +188,7 @@ pub async fn nuke(
             )
             .await
         {
-            println!(
+            warn!(
                 "Failed to edit original confirmation message on timeout: {:?}",
                 e
             );

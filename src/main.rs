@@ -1,5 +1,6 @@
 mod commands;
 
+use log::{debug, error, info};
 use poise::serenity_prelude::{self as serenity};
 use std::env::var;
 
@@ -18,11 +19,11 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     match error {
         poise::FrameworkError::Setup { error, .. } => panic!("Failed to start bot: {:?}", error),
         poise::FrameworkError::Command { error, ctx, .. } => {
-            println!("Error in command `{}`: {:?}", ctx.command().name, error);
+            error!("Error in command `{}`: {:?}", ctx.command().name, error);
         }
         error => {
             if let Err(e) = poise::builtins::on_error(error).await {
-                println!("Error while handling error: {}", e)
+                error!("Error while handling error: {}", e)
             }
         }
     }
@@ -35,7 +36,7 @@ async fn main() {
     let framework = poise::Framework::builder()
         .setup(move |ctx, ready, framework| {
             Box::pin(async move {
-                println!("Logged in as {}", ready.user.name);
+                info!("Logged in as {}", ready.user.name);
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
@@ -53,13 +54,13 @@ async fn main() {
             // This code is run before every command
             pre_command: |ctx| {
                 Box::pin(async move {
-                    println!("Executing command {}...", ctx.command().qualified_name);
+                    debug!("Executing command {}...", ctx.command().qualified_name);
                 })
             },
             // This code is run after a command if it was successful (returned Ok)
             post_command: |ctx| {
                 Box::pin(async move {
-                    println!("Executed command {}!", ctx.command().qualified_name);
+                    debug!("Executed command {}!", ctx.command().qualified_name);
                 })
             },
             // Every command invocation must pass this check to continue execution
