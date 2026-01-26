@@ -120,7 +120,7 @@ pub async fn nuke(
         while let Some(mut mci) =
             poise::serenity_prelude::ComponentInteractionCollector::new(ctx.serenity_context())
                 .timeout(std::time::Duration::from_secs(30))
-                .filter(move |mci| (mci.data.custom_id == "sure" || mci.data.custom_id == "cancel"))
+                .filter(move |mci| mci.data.custom_id == "sure" || mci.data.custom_id == "cancel")
                 .author_id(ctx.author().id)
                 .channel_id(ctx.channel_id())
                 .await
