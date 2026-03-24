@@ -1,105 +1,75 @@
-# Discord Bot Project
+# Discord Bot
 
-en | [zh-cn](README.zh-cn.md)
+一個以 Rust 打造的 Discord 機器人，使用 [Poise](https://github.com/serenity-rs/poise) 作為指令框架、[Serenity](https://github.com/serenity-rs/serenity) 作為 Discord API 函式庫，並以 Tokio 非同步執行。
 
-This project is a Discord bot built using the [Poise](https://docs.rs/poise/latest/poise/) framework. It leverages the Serenity library for Discord API interactions and uses Tokio for asynchronous runtime. The bot is designed to handle various commands and events, with a focus on modularity and maintainability.
+## 功能
 
-## Technology Stack
+目前已實作的 Slash Commands：
 
-- **Programming Language**: Rust
-- **Framework**: Poise (for command handling)
-- **Libraries**:
-  - Serenity: Discord API interactions
-  - Tokio: Asynchronous runtime
-  - Tracing-subscriber: Logging
+- `/help`：顯示指令說明
+- `/ping`：回傳機器人延遲（ms）
+- `/clear`：批次刪除訊息（需要 `MANAGE_MESSAGES` 權限）
+- `/nuke`：重建目前頻道（需要 `MANAGE_CHANNELS` 權限）
 
-## Project Architecture
+## 技術棧
 
-The bot uses the Poise framework to simplify command and event handling. Key architectural components include:
+- Rust（Edition 2024）
+- [poise](https://crates.io/crates/poise) `0.6.1`
+- [tokio](https://crates.io/crates/tokio) `1.50.0`
+- [tracing-subscriber](https://crates.io/crates/tracing-subscriber) `0.3.23`
+- [log](https://crates.io/crates/log) `0.4.29`
 
-- **Commands**: Defined as asynchronous functions with the `#[poise::command]` attribute. Commands are modular and located in `src/commands.rs`.
-- **Error Handling**: Custom error handling is implemented in the `on_error` function in `src/main.rs`.
-- **Event Handling**: Events are logged using the `event_handler` option in the framework configuration.
+## 專案結構
 
-## Getting Started
+- `src/main.rs`：機器人啟動、框架設定、全域 hook、錯誤處理
+- `src/commands.rs`：Slash Commands 實作
+- `Cargo.toml`：套件資訊與依賴
 
-### Prerequisites
+## 需求環境
 
-- Install Rust from [rust-lang.org](https://www.rust-lang.org/).
-- Set up the `DISCORD_TOKEN` environment variable with your Discord bot token.
+- 已安裝 Rust（建議使用最新版 stable）
+- 一個 Discord Bot Token
 
-### Installation
+## 快速開始
 
-1. Clone the repository:
+1. 安裝相依套件並編譯
+2. 設定環境變數 `DISCORD_TOKEN`
+3. 啟動機器人
 
-   ```bash
-   git clone <repository-url>
-   cd discord-bot
-   ```
+### 設定環境變數
 
-2. Build the project:
+此專案啟動時會讀取 `DISCORD_TOKEN`。
 
-   ```bash
-   cargo build
-   ```
+若未設定，程式會在啟動時中止並提示：
 
-3. Run the bot:
+- `Missing DISCORD_TOKEN env var, see README for more information.`
 
-   ```bash
-   cargo run
-   ```
+在 PowerShell 中可先設定：
 
-## Project Structure
+- 當前終端有效：`$env:DISCORD_TOKEN="你的 Bot Token"`
+- 永久（使用者層級）：`setx DISCORD_TOKEN "你的 Bot Token"`
 
-- **`src/main.rs`**: Entry point of the application. Sets up the bot framework, initializes commands, and handles global error handling.
-- **`src/commands.rs`**: Contains the implementation of bot commands, such as `help`, `ping`, `clear`, and `nuke`.
-- **`Cargo.toml`**: Defines project dependencies, including `poise`, `tokio`, and `tracing-subscriber`.
+> 設定後若使用 `setx`，請重新開啟終端機再啟動程式。
 
-## Key Features
+## 執行與測試
 
-- Modular command handling
-- Advanced error and event logging
-- Example commands like `help`, `ping`, `clear`, and `nuke`
+- 啟動：`cargo run`
+- 編譯：`cargo build`
+- 測試：`cargo nextest run`
 
-## Development Workflow
+## 權限與注意事項
 
-- **Building and Running**:
-  - Build the project with `cargo build`.
-  - Run the bot with `cargo run`.
-- **Testing**:
+- `/clear` 需要 `MANAGE_MESSAGES`
+- `/nuke` 需要 `MANAGE_CHANNELS`
+- `/nuke` 會刪除目前頻道並以相近設定建立新頻道，請謹慎使用
 
-  - Use the `ast-grep: test` task to run interactive tests:
+## 日誌
 
-    ```bash
-    sg test --interactive
-    ```
+專案使用 `tracing-subscriber` 初始化輸出，可搭配 `RUST_LOG` 觀察更詳細日誌，例如：
 
-  - Use the `ast-grep: scan` task to scan the codebase:
+- `RUST_LOG=info`
+- `RUST_LOG=debug`
 
-    ```bash
-    sg scan
-    ```
+## 授權
 
-- **Debugging**:
-  - Logs are managed using the `tracing-subscriber` crate. Set the `RUST_LOG` environment variable to the desired level (e.g., `info`, `debug`).
-
-## Coding Standards
-
-- Commands follow the Poise framework's conventions.
-- Use `ctx.say` for user-friendly error messages.
-- Ensure modularity and maintainability in command definitions.
-
-## Testing
-
-- Testing is integrated into the development workflow using `ast-grep` tasks.
-- Ensure all commands and features are thoroughly tested before deployment.
-
-## Contributing
-
-- Follow the coding standards outlined above.
-- Refer to the examples in `src/commands.rs` for guidance on adding new commands.
-- Ensure all contributions are tested and documented.
-
----
-
-For more details, refer to the [Poise documentation](https://docs.rs/poise/latest/poise/).
+[gpl-3.0](LICENSE.txt)
